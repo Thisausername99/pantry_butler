@@ -1,0 +1,1 @@
+DROP TABLE pantry_entry;
