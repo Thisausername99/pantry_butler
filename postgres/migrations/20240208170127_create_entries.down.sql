@@ -1,1 +1,1 @@
-DROP TABLE pantry_entry;
+DROP TABLE pantry_entries;

@@ -1,12 +1,12 @@
-CREATE TABLE pantry_entry (
+CREATE TABLE pantry_entries (
   id SERIAL PRIMARY KEY,
-  name VARCHAR,
+  name VARCHAR UNIQUE NOT NULL,
   quantity INTEGER,
   quantity_type VARCHAR,
-  created_at TIMESTAMP
+  expiration TIMESTAMP
 );
 
-INSERT INTO pantry_entry (name) values ('onion'); 
-INSERT INTO pantry_entry (name) values ('rice');
-INSERT INTO pantry_entry (name) values ('butter'); 
-INSERT INTO pantry_entry (name) values ('garlic'); 
+INSERT INTO pantry_entries (name) values ('onion'); 
+INSERT INTO pantry_entries (name) values ('rice');
+INSERT INTO pantry_entries (name) values ('butter'); 
+INSERT INTO pantry_entries (name) values ('garlic'); 

@@ -15,7 +15,8 @@ func (d DBLogger) BeforeQuery(ctx context.Context, q *pg.QueryEvent) (context.Co
 }
 
 func (d DBLogger) AfterQuery(ctx context.Context, q *pg.QueryEvent) error {
-	fmt.Println(q.FormattedQuery())
+	fq, _ := q.FormattedQuery()
+	fmt.Println(string(fq))
 	return nil
 }
 
@@ -33,41 +34,23 @@ func StartDB() (*pg.DB, error) {
 			return nil, err
 		}
 	} else {
-		//TODO: Need to wrap it in .env file
 		opts = &pg.Options{
 			//default port
 			//depends on the db service from docker compose
-			Addr:     "postgres://postgres:postgres@localhost:5432/pantry_butler_dev?sslmode=disable",
+			Addr:     "localhost:5432",
 			User:     "postgres",
 			Password: "postgres",
+			Database: "pantry_butler_dev",
 		}
 	}
 
 	//connect db
 	db := pg.Connect(opts)
-	// //run migrations
-	// collection := migrations.NewCollection()
-	// err = collection.DiscoverSQLMigrations("migrations")
-	// if err != nil {
-	// 	return nil, err
-	// }
 
-	// //start the migrations
-	// _, _, err = collection.Run(db, "init")
-	// if err != nil {
-	// 	return nil, err
-	// }
+	ctx := context.Background()
 
-	// oldVersion, newVersion, err := collection.Run(db, "up")
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if newVersion != oldVersion {
-	// 	log.Printf("migrated from version %d to %d\n", oldVersion, newVersion)
-	// } else {
-	// 	log.Printf("version is %d\n", oldVersion)
-	// }
-
-	//return the db connection
+	if err := db.Ping(ctx); err != nil {
+		panic(err)
+	}
 	return db, err
 }

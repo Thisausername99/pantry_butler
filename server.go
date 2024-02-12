@@ -18,7 +18,9 @@ const defaultPort = "8080"
 func main() {
 	DB, err := postgres.StartDB()
 	if err != nil {
-		panic(fmt.Errorf("Error connecting to DB"))
+		panic(fmt.Errorf("error connecting to db"))
+	} else {
+		fmt.Printf("Connected succesfully!")
 	}
 
 	defer DB.Close()
@@ -31,8 +33,8 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		RecipesRepo:       postgres.RecipesRepo{DB: DB},
-		PantryEntriesRepo: postgres.PantryEntriesRepo{DB: DB},
+		RecipeRepo:      postgres.RecipeRepo{DB: DB},
+		PantryEntryRepo: postgres.PantryEntryRepo{DB: DB},
 	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

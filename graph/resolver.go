@@ -10,10 +10,7 @@ import (
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-// TODO:
-// Add database or http client here
-
 type Resolver struct {
-	RecipesRepo       postgres.RecipesRepo
-	PantryEntriesRepo postgres.PantryEntriesRepo
+	RecipeRepo      postgres.RecipeRepo
+	PantryEntryRepo postgres.PantryEntryRepo
 }
