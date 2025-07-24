@@ -1,4 +1,4 @@
-package models
+package entity
 
 type Recipe struct {
 	Name        string                 `json:"name"`

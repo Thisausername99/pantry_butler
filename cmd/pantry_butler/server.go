@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/thisausername99/recipes-api/graph"
-	"github.com/thisausername99/recipes-api/postgres"
+	"github.com/thisausername99/pantry-butler/internal/adapter/delivery/graphql"
+	"github.com/thisausername99/pantry-butler/internal/adapter/persistence/mongo"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -16,7 +16,7 @@ import (
 const defaultPort = "8080"
 
 func main() {
-	DB, err := postgres.StartDB()
+	DB, err := mongo.StartDB()
 	if err != nil {
 		panic(fmt.Errorf("error connecting to db"))
 	} else {
@@ -25,16 +25,16 @@ func main() {
 
 	defer DB.Close()
 
-	DB.AddQueryHook(postgres.DBLogger{})
+	DB.AddQueryHook(mongo.DBLogger{})
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		RecipeRepo:      postgres.RecipeRepo{DB: DB},
-		PantryEntryRepo: postgres.PantryEntryRepo{DB: DB},
+	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: &graphql.Resolver{
+		RecipeRepo:      mongo.RecipeRepo{DB: DB},
+		PantryEntryRepo: mongo.PantryEntryRepo{DB: DB},
 	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

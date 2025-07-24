@@ -1,11 +1,11 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - graph/*.graphqls
+  - internal/adapter/delivery/graphql/*.graphqls
 
 # Where should the generated server code go?
 exec:
-  filename: graph/generated.go
-  package: graph
+  filename: internal/adapter/delivery/graphql/generated.go
+  package: graphql
 
 # Uncomment to enable federation
 # federation:
@@ -14,14 +14,14 @@ exec:
 
 # Where should any generated models go?
 model:
-  filename: models/models_gen.go
-  package: models
+  filename: internal/domain/models_gen.go
+  package: entity
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: graph
-  package: graph
+  dir: internal/adapter/delivery/graphql
+  package: graphql
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
@@ -66,7 +66,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "github.com/thisausername99/recipes-api/models"
+ - "github.com/thisausername99/pantry-butler"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -74,6 +74,12 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
+  PantryEntry:
+    model:
+      - github.com/thisausername99/pantry-butler/internal/domain.PantryEntry
+  Recipe:
+    model:
+      - github.com/thisausername99/pantry-butler/internal/domain.Recipe
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

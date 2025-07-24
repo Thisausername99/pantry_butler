@@ -1,16 +1,16 @@
-package postgres
+package mongo
 
 import (
 	"github.com/go-pg/pg/v10"
-	"github.com/thisausername99/recipes-api/models"
+	entity "github.com/thisausername99/pantry-butler/internal/domain"
 )
 
 type RecipeRepo struct {
 	DB *pg.DB
 }
 
-func (m *RecipeRepo) GetRecipes() ([]*models.Recipe, error) {
-	var recipe []*models.Recipe
+func (m *RecipeRepo) GetRecipes() ([]*entity.Recipe, error) {
+	var recipe []*entity.Recipe
 	err := m.DB.Model(&recipe).Select()
 	if err != nil {
 		return nil, err
@@ -18,8 +18,8 @@ func (m *RecipeRepo) GetRecipes() ([]*models.Recipe, error) {
 	return recipe, nil
 }
 
-func (m *RecipeRepo) GetRecipesByCuisine(cuisine string) ([]*models.Recipe, error) {
-	var recipe []*models.Recipe
+func (m *RecipeRepo) GetRecipesByCuisine(cuisine string) ([]*entity.Recipe, error) {
+	var recipe []*entity.Recipe
 	err := m.DB.Model(&recipe).Where("cuisine = ?", cuisine).Select()
 	if err != nil {
 		return nil, err
