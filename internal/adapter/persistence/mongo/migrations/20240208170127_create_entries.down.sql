@@ -1,1 +1,0 @@
-DROP TABLE pantry_entries;

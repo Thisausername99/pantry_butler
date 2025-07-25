@@ -23,6 +23,7 @@ type PantryEntry {
 
 
 type Recipe {
+  id: ID!
   name: String!
   rating: Int
   ingredients: Map!

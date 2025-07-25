@@ -2,55 +2,49 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 	"os"
+	"time"
 
-	"github.com/go-pg/pg/v10"
+	"github.com/thisausername99/pantry-butler/internal/logging"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
-type DBLogger struct{}
+// StartMongo connects to MongoDB and returns the client and database handle.
+func StartMongo() (*mongo.Client, *mongo.Database, error) {
+	logger := logging.GetLogger()
+	// mongoHost := os.Getenv("MONGO_HOST")
+	// mongoPort := os.Getenv("MONGO_PORT")
+	// mongoUser := os.Getenv("MONGO_USER")
+	// mongoPassword := os.Getenv("MONGO_PASSWORD")
+	// mongoDb := os.Getenv("MONGO_DB")
 
-func (d DBLogger) BeforeQuery(ctx context.Context, q *pg.QueryEvent) (context.Context, error) {
-	return ctx, nil
-}
-
-func (d DBLogger) AfterQuery(ctx context.Context, q *pg.QueryEvent) error {
-	fq, _ := q.FormattedQuery()
-	fmt.Println(string(fq))
-	return nil
-}
-
-func StartDB() (*pg.DB, error) {
-	var (
-		opts *pg.Options
-		err  error
-	)
-
-	//check if we are in prod
-	//then use the db url from the env
-	if os.Getenv("ENV") == "PROD" {
-		opts, err = pg.ParseURL(os.Getenv("DATABASE_URL"))
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		opts = &pg.Options{
-			//default port
-			//depends on the db service from docker compose
-			Addr:     "localhost:5432",
-			User:     "postgres",
-			Password: "postgres",
-			Database: "pantry_butler_dev",
-		}
+	// if mongoHost == "" {
+	// 	mongoHost = "localhost"
+	// }
+	dbName := os.Getenv("MONGODB_DB")
+	if dbName == "" {
+		dbName = "pantry_butler_dev"
 	}
+	// Form the URI connection string
+	// If you change MONGO_DB or MONGODB_DB, make sure your docker-compose and environment variables are correct and rebuild with --no-cache.
+	uri := os.Getenv("MONGO_URI")
+	logger.Info("Connecting to MongoDB...", zap.String("uri", uri))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	//connect db
-	db := pg.Connect(opts)
-
-	ctx := context.Background()
-
-	if err := db.Ping(ctx); err != nil {
-		panic(err)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		logger.Error("Error connecting to MongoDB", zap.Error(err))
+		return nil, nil, err
 	}
-	return db, err
+	// Ping to verify connection
+	if err := client.Ping(ctx, nil); err != nil {
+		logger.Error("Error pinging MongoDB", zap.Error(err))
+		return nil, nil, err
+	}
+	logger.Info("Connected to MongoDB", zap.String("dbName", dbName))
+	db := client.Database(dbName)
+	return client, db, nil
 }

@@ -28,17 +28,17 @@ func (r *mutationResolver) InsertEntry(ctx context.Context, entry entity.PantryE
 		pantryEntry.Expiration = entry.Expiration
 	}
 
-	return r.PantryEntryRepo.InsertPantryEntry(pantryEntry)
+	return r.PantryEntryRepo.InsertPantryEntry(ctx, pantryEntry)
 }
 
 // Recipe is the resolver for the recipe field.
 func (r *queryResolver) Recipe(ctx context.Context) ([]*entity.Recipe, error) {
-	return r.RecipeRepo.GetRecipes()
+	return r.RecipeRepo.GetRecipes(ctx)
 }
 
 // RecipeByCuisine is the resolver for the recipeByCuisine field.
 func (r *queryResolver) RecipeByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error) {
-	return r.RecipeRepo.GetRecipesByCuisine(cuisine)
+	return r.RecipeRepo.GetRecipesByCuisine(ctx, cuisine)
 }
 
 // Mutation returns MutationResolver implementation.

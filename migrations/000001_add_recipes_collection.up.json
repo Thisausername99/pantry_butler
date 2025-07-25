@@ -1,0 +1,41 @@
+[
+    {
+    "create": "pantries"
+  },
+  {
+    "createIndexes": "pantries",
+    "indexes": [
+      {
+        "key": { "id": 1 },
+        "name": "id_1",
+        "unique": true
+      }
+    ]
+  },
+  {
+    "insert": "pantries",
+    "documents": [
+      {
+        "id": "1",
+        "name": "Flour",
+        "expiration": { "$date": "2024-12-31T00:00:00Z" },
+        "quantity": 2,
+        "quantityType": "kg"
+      },
+      {
+        "id": "2",
+        "name": "Sugar",
+        "expiration": { "$date": "2024-11-30T00:00:00Z" },
+        "quantity": 1,
+        "quantityType": "kg"
+      },
+      {
+        "id": "3",
+        "name": "Salt",
+        "expiration": null,
+        "quantity": 0.5,
+        "quantityType": "kg"
+      }
+    ]
+  }
+]

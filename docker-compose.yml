@@ -1,5 +1,5 @@
 services:
-  db:
+  mongodb:
     image: mongo:latest
     container_name: pantry_mongodb
     environment:
@@ -10,23 +10,33 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - pantry_net
   
-  api:
-    build: .
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     ports:
       - 5000:5000
     environment:
-      - PORT=5000
-      - DATABASE_URL=db
+      PORT: 5000
+      MONGO_URI: mongodb://root:password@mongodb:27017/pantry_butler_dev?authSource=admin
     depends_on:
-      - db
-  envoy:
-    image: envoyproxy/envoy:v1.35.0
-    container_name: envoy
-    ports:
-      - 8080:8080
-    volumes:
-      - ./config/envoy/conf.yaml:/etc/envoy/envoy.yaml
+      - mongodb
+    networks:
+      - pantry_net
+  # envoy:
+  #   image: envoyproxy/envoy:v1.35.0
+  #   container_name: envoy
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - ./config/envoy/conf.yaml:/etc/envoy/envoy.yaml
+
 
 volumes:
   mongodb_data:
+
+networks:
+  pantry_net:
