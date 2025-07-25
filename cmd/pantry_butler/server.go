@@ -13,19 +13,29 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/thisausername99/pantry-butler/internal/usecase"
 )
 
 const defaultPort = "5000"
 
 func main() {
 	log := logging.GetLogger()
+	log.Info("Starting Pantry Butler server...")
+
 	client, db, err := mongo.StartMongo()
 	if err != nil {
-		panic(fmt.Errorf("error connecting to db: %w", err))
+		log.Error("error connecting to db", zap.Error(err))
+		os.Exit(1)
 	} else {
-		fmt.Printf("Connected successfully!\n")
+		log.Info("Connected to MongoDB successfully!")
 	}
-	defer client.Disconnect(context.Background())
+	defer func() {
+		if err := client.Disconnect(context.Background()); err != nil {
+			log.Error("Error disconnecting MongoDB client", zap.Error(err))
+		} else {
+			log.Info("MongoDB client disconnected.")
+		}
+	}()
 
 	pantryEntryCollection := db.Collection("pantry_entries")
 	recipeCollection := db.Collection("recipes")
@@ -35,14 +45,21 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: &graphql.Resolver{
-		RecipeRepo:      mongo.RecipeRepo{Collection: recipeCollection},
-		PantryEntryRepo: mongo.PantryEntryRepo{Collection: pantryEntryCollection},
-	}}))
+	uc := &usecase.Usecase{
+		Logger: log,
+		RepoWrapper: usecase.RepoWrapper{
+			RecipeRepo:      &mongo.RecipeRepo{Collection: recipeCollection, Logger: log},
+			PantryEntryRepo: &mongo.PantryEntryRepo{Collection: pantryEntryCollection, Logger: log},
+		},
+	}
+
+	srv := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: &graphql.Resolver{UseCase: *uc}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 
-	log.Info("connect to http://localhost:%s/ for GraphQL playground", zap.String("port", port))
-	http.ListenAndServe(":"+port, nil)
+	log.Info(fmt.Sprintf("connect to http://localhost:%s/ for GraphQL playground", port))
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal("Failed to start HTTP server", zap.Error(err))
+	}
 }

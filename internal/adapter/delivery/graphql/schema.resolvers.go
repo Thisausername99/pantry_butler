@@ -6,39 +6,29 @@ package graphql
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	entity "github.com/thisausername99/pantry-butler/internal/domain"
 )
 
 // UpsertEntry is the resolver for the upsertEntry field.
 func (r *mutationResolver) InsertEntry(ctx context.Context, entry entity.PantryEntryInput) (*entity.PantryEntry, error) {
-	pantryEntry := &entity.PantryEntry{}
-	if entry.Name == "" {
-		return nil, errors.New("entry does not have a name")
-	}
-
-	pantryEntry.Name = entry.Name
-
-	if entry.Quantity != nil {
-		pantryEntry.Quantity = entry.Quantity
-	}
-
-	if entry.Expiration != nil {
-		pantryEntry.Expiration = entry.Expiration
-	}
-
-	return r.PantryEntryRepo.InsertPantryEntry(ctx, pantryEntry)
+	return r.UseCase.RepoWrapper.PantryEntryRepo.InsertPantryEntry(ctx, &entry)
 }
 
-// Recipe is the resolver for the recipe field.
-func (r *queryResolver) Recipe(ctx context.Context) ([]*entity.Recipe, error) {
-	return r.RecipeRepo.GetRecipes(ctx)
+// GetRecipe is the resolver for the getRecipe field.
+func (r *queryResolver) GetRecipe(ctx context.Context) ([]*entity.Recipe, error) {
+	return r.UseCase.RepoWrapper.RecipeRepo.GetRecipes(ctx)
 }
 
-// RecipeByCuisine is the resolver for the recipeByCuisine field.
-func (r *queryResolver) RecipeByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error) {
-	return r.RecipeRepo.GetRecipesByCuisine(ctx, cuisine)
+// GetRecipeByCuisine is the resolver for the getRecipeByCuisine field.
+func (r *queryResolver) GetRecipeByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error) {
+	panic(fmt.Errorf("not implemented: GetRecipeByCuisine - getRecipeByCuisine"))
+}
+
+// MatchingRecipes is the resolver for the matchingRecipes field.
+func (r *queryResolver) MatchingRecipes(ctx context.Context) ([]*entity.Recipe, error) {
+	return r.UseCase.FindMatchingRecipes(ctx)
 }
 
 // Mutation returns MutationResolver implementation.

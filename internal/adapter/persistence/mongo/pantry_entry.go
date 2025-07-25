@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -47,16 +48,27 @@ func (m *PantryEntryRepo) GetPantryEntries(ctx context.Context) ([]*entity.Pantr
 	return entries, nil
 }
 
-func (m *PantryEntryRepo) InsertPantryEntry(ctx context.Context, entry *entity.PantryEntry) (*entity.PantryEntry, error) {
+func (m *PantryEntryRepo) InsertPantryEntry(ctx context.Context, entry *entity.PantryEntryInput) (*entity.PantryEntry, error) {
+	pantryEntry := &entity.PantryEntry{}
+	if entry.Name == "" {
+		return nil, errors.New("entry does not have a name")
+	}
+
+	pantryEntry.Name = entry.Name
+
+	if entry.Quantity != nil {
+		pantryEntry.Quantity = entry.Quantity
+	}
+
+	if entry.Expiration != nil {
+		pantryEntry.Expiration = entry.Expiration
+	}
+
 	_, err := m.Collection.InsertOne(ctx, entry)
 	if err != nil {
-		if m.Logger != nil {
-			m.Logger.Error("Failed to insert pantry entry", zap.Error(err))
-		}
+		m.Logger.Error("Failed to insert pantry entry", zap.Error(err))
 		return nil, err
 	}
-	if m.Logger != nil {
-		m.Logger.Info("Inserted pantry entry", zap.Any("entry", entry))
-	}
-	return entry, nil
+	m.Logger.Info("Inserted pantry entry", zap.Any("entry", entry))
+	return pantryEntry, nil
 }

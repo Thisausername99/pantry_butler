@@ -1,6 +1,8 @@
 package graphql
 
-import "github.com/thisausername99/pantry-butler/internal/adapter/persistence/mongo"
+import (
+	"github.com/thisausername99/pantry-butler/internal/usecase"
+)
 
 //go:generate go run github.com/99designs/gqlgen generate
 
@@ -9,6 +11,5 @@ import "github.com/thisausername99/pantry-butler/internal/adapter/persistence/mo
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	RecipeRepo      mongo.RecipeRepo
-	PantryEntryRepo mongo.PantryEntryRepo
+	UseCase usecase.Usecase // Add the MatchUsecase here for use in resolvers
 }

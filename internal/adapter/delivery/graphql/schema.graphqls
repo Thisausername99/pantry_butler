@@ -36,6 +36,7 @@ type Recipe {
 type Query {
   recipe: [Recipe!]!
   recipeByCuisine(cuisine: String!): [Recipe!]!
+  matchingRecipes: [Recipe!]!
 }
 
 
