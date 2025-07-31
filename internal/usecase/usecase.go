@@ -1,29 +1,25 @@
 package usecase
 
 import (
-	context "context"
-
-	entity "github.com/thisausername99/pantry-butler/internal/domain"
+	repo "github.com/thisausername99/pantry_butler/internal/domain/repository"
 	"go.uber.org/zap"
 )
 
-type RecipeRepository interface {
-	GetRecipes(ctx context.Context) ([]*entity.Recipe, error)
-	GetRecipesByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error)
-}
-
-type PantryEntryRepository interface {
-	GetPantryEntries(ctx context.Context) ([]*entity.PantryEntry, error)
-	InsertPantryEntry(ctx context.Context, entry *entity.PantryEntryInput) (*entity.PantryEntry, error)
-}
-
 type RepoWrapper struct {
-	RecipeRepo      RecipeRepository
-	PantryEntryRepo PantryEntryRepository
+	RecipeRepo repo.RecipeRepository
+	PantryRepo repo.PantryRepository
+	UserRepo   repo.UserRepository
 	// Add more repositories as needed
 }
 
 type Usecase struct {
 	RepoWrapper RepoWrapper
 	Logger      *zap.Logger
+}
+
+func NewUsecase(repoWrapper RepoWrapper, logger *zap.Logger) *Usecase {
+	return &Usecase{
+		RepoWrapper: repoWrapper,
+		Logger:      logger,
+	}
 }

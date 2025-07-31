@@ -1,10 +1,10 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - internal/adapter/delivery/graphql/*.graphqls
+  - internal/delivery/graphql/*.graphqls
 
 # Where should the generated server code go?
 exec:
-  filename: internal/adapter/delivery/graphql/generated.go
+  filename: internal/delivery/graphql/generated.go
   package: graphql
 
 # Uncomment to enable federation
@@ -14,13 +14,13 @@ exec:
 
 # Where should any generated models go?
 model:
-  filename: internal/domain/models_gen.go
+  filename: internal/domain/entity/models_gen.go
   package: entity
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: internal/adapter/delivery/graphql
+  dir: internal/delivery/graphql
   package: graphql
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
@@ -66,7 +66,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "github.com/thisausername99/pantry-butler"
+  - "github.com/thisausername99/pantry_butler"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -76,10 +76,16 @@ autobind:
 models:
   PantryEntry:
     model:
-      - github.com/thisausername99/pantry-butler/internal/domain.PantryEntry
+      - github.com/thisausername99/pantry_butler/internal/domain/entity.PantryEntry
   Recipe:
     model:
-      - github.com/thisausername99/pantry-butler/internal/domain.Recipe
+      - github.com/thisausername99/pantry_butler/internal/domain/entity.Recipe
+  User:
+    model:
+      - github.com/thisausername99/pantry_butler/internal/domain/entity.User
+  Pantry:
+    model:
+      - github.com/thisausername99/pantry_butler/internal/domain/entity.Pantry
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID

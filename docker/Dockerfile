@@ -2,7 +2,7 @@
 FROM golang:1.24.5-alpine AS builder
 WORKDIR /app
 COPY . /app
-RUN go build -o main ./cmd/pantry_butler/server.go
+RUN go build -o main ./cmd/pantry_butler/main.go
 
 # Run stage
 FROM alpine:3.20

@@ -17,11 +17,15 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    container_name: pantry_butler_server
     ports:
       - 8080:8080
     environment:
       PORT: 8080
-      MONGO_URI: mongodb://root:password@mongodb:27017/pantry_butler_dev?authSource=admin
+      MONGODB_URI: mongodb://root:password@mongodb:27017/pantry_butler_dev?authSource=admin
+      MONGODB_DATABASE: pantry_butler_dev
+      SERVER_PORT: 27107
+      SERVER_HOST: mongodb
     depends_on:
       - mongodb
     networks:

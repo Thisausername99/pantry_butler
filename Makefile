@@ -11,7 +11,7 @@ NC=\033[0m # No Color
 # This will output the help for each task
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 init_setup: ## Start services
-	docker compose up --remove-orphans -d
+	docker compose up --build --remove-orphans -d
 .PHONY: init_setup
 
 down: ## Down microservices

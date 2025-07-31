@@ -9,23 +9,25 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
-	entity "github.com/thisausername99/pantry-butler/internal/domain"
-	"github.com/thisausername99/pantry-butler/internal/usecase"
+	"github.com/thisausername99/pantry_butler/internal/domain/entity"
+	"github.com/thisausername99/pantry_butler/internal/usecase"
 )
+
+var testPantryID = "testPantryID"
 
 func TestGetAllPantryEntries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	// Create mock repository
-	mockPantryRepo := NewMockPantryEntryRepository(ctrl)
+	mockPantryRepo := NewMockPantryRepository(ctrl)
 	mockRecipeRepo := NewMockRecipeRepository(ctrl)
 
 	// Create usecase instance
 	usecaseInstance := &usecase.Usecase{
 		RepoWrapper: usecase.RepoWrapper{
-			PantryEntryRepo: mockPantryRepo,
-			RecipeRepo:      mockRecipeRepo,
+			PantryRepo: mockPantryRepo,
+			RecipeRepo: mockRecipeRepo,
 		},
 		Logger: zap.NewNop(),
 	}
@@ -49,12 +51,12 @@ func TestGetAllPantryEntries(t *testing.T) {
 	// Set up expectations
 	ctx := context.Background()
 	mockPantryRepo.EXPECT().
-		GetPantryEntries(ctx).
+		GetPantryEntries(ctx, testPantryID).
 		Return(expectedEntries, nil).
 		Times(1)
 
 	// Execute test
-	result, err := usecaseInstance.GetAllPantryEntries(ctx)
+	result, err := usecaseInstance.GetAllPantryEntries(ctx, testPantryID)
 
 	// Assertions
 	assert.NoError(t, err)
@@ -69,14 +71,14 @@ func TestGetAllPantryEntries_Error(t *testing.T) {
 	defer ctrl.Finish()
 
 	// Create mock repository
-	mockPantryRepo := NewMockPantryEntryRepository(ctrl)
+	mockPantryRepo := NewMockPantryRepository(ctrl)
 	mockRecipeRepo := NewMockRecipeRepository(ctrl)
 
 	// Create usecase instance
 	usecaseInstance := &usecase.Usecase{
 		RepoWrapper: usecase.RepoWrapper{
-			PantryEntryRepo: mockPantryRepo,
-			RecipeRepo:      mockRecipeRepo,
+			PantryRepo: mockPantryRepo,
+			RecipeRepo: mockRecipeRepo,
 		},
 		Logger: zap.NewNop(),
 	}
@@ -85,12 +87,12 @@ func TestGetAllPantryEntries_Error(t *testing.T) {
 	ctx := context.Background()
 	expectedError := assert.AnError
 	mockPantryRepo.EXPECT().
-		GetPantryEntries(ctx).
+		GetPantryEntries(ctx, testPantryID).
 		Return(nil, expectedError).
 		Times(1)
 
 	// Execute test
-	result, err := usecaseInstance.GetAllPantryEntries(ctx)
+	result, err := usecaseInstance.GetAllPantryEntries(ctx, testPantryID)
 
 	// Assertions
 	assert.Error(t, err)

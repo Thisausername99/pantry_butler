@@ -1,0 +1,36 @@
+[
+    {    
+        "create ": "users"
+    },
+    {
+        "indexes": [
+        {
+        "key": { "id": 1 },
+        "name": "id_1",
+        "unique": true
+        }
+        ]
+    },
+    {
+    "insertMany": "users",
+    "documents": [
+        {
+        "id": "1",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "pantry_id": "1"
+        },
+        {
+        "id": "2",
+        "name": "Jane Doe",
+        "email": "jane.doe@example.com",
+        "pantry_id": "2"
+        },
+        {
+        "id": "3",
+        "name": "Jim Doe",
+        "email": "jim.doe@example.com",
+        "pantry_id": "3"
+        }
+    ]}
+]
