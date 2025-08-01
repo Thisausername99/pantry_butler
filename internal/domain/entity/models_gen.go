@@ -13,3 +13,9 @@ type PantryEntryInput struct {
 
 type Query struct {
 }
+
+type UserRegisterInput struct {
+	Name     *string `json:"name,omitempty"`
+	Email    string  `json:"email"`
+	Password string  `json:"password"`
+}

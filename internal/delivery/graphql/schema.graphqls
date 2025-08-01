@@ -4,6 +4,16 @@
 scalar Map
 scalar Time
 
+
+type UserRegisterInput {
+  name : String
+  email : String!
+  firstName: String
+  lastName: String
+  password: String!
+}
+
+
 type PantryEntry {
   ID: String!
   name: String!

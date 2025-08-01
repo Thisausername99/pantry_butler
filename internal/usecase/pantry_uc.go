@@ -17,3 +17,7 @@ func (u *Usecase) InsertPantryEntry(ctx context.Context, pantryID string, entry 
 func (u *Usecase) DeletePantryEntry(ctx context.Context, pantryID string, entryID string) error {
 	return u.RepoWrapper.PantryRepo.DeletePantryEntry(ctx, pantryID, entryID)
 }
+
+func (u *Usecase) CreateNewPantry(ctx context.Context, pantry *entity.Pantry) error {
+	return u.RepoWrapper.PantryRepo.CreateNewPantry(ctx, pantry)
+}

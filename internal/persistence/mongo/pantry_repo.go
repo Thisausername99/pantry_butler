@@ -78,3 +78,14 @@ func (m *PantryEntryRepo) DeletePantryEntry(ctx context.Context, pantryID string
 	m.Logger.Info("Deleted pantry entry", zap.String("entryId", entryID))
 	return nil
 }
+
+func (m *PantryEntryRepo) CreateNewPantry(ctx context.Context, pantry *entity.Pantry) error {
+	_, err := m.Collection.InsertOne(ctx, pantry)
+	if err != nil {
+		if m.Logger != nil {
+			m.Logger.Error("Failed to create new pantry", zap.Error(err))
+		}
+		return err
+	}
+	return nil
+}

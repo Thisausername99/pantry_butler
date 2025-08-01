@@ -76,6 +76,12 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 		Rating      func(childComplexity int) int
 	}
+
+	UserRegisterInput struct {
+		Email    func(childComplexity int) int
+		Name     func(childComplexity int) int
+		Password func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
@@ -245,6 +251,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Recipe.Rating(childComplexity), true
+
+	case "UserRegisterInput.email":
+		if e.complexity.UserRegisterInput.Email == nil {
+			break
+		}
+
+		return e.complexity.UserRegisterInput.Email(childComplexity), true
+
+	case "UserRegisterInput.name":
+		if e.complexity.UserRegisterInput.Name == nil {
+			break
+		}
+
+		return e.complexity.UserRegisterInput.Name(childComplexity), true
+
+	case "UserRegisterInput.password":
+		if e.complexity.UserRegisterInput.Password == nil {
+			break
+		}
+
+		return e.complexity.UserRegisterInput.Password(childComplexity), true
 
 	}
 	return 0, false
@@ -1452,6 +1479,135 @@ func (ec *executionContext) _Recipe_description(ctx context.Context, field graph
 func (ec *executionContext) fieldContext_Recipe_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Recipe",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserRegisterInput_name(ctx context.Context, field graphql.CollectedField, obj *entity.UserRegisterInput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserRegisterInput_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserRegisterInput_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserRegisterInput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserRegisterInput_email(ctx context.Context, field graphql.CollectedField, obj *entity.UserRegisterInput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserRegisterInput_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserRegisterInput_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserRegisterInput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserRegisterInput_password(ctx context.Context, field graphql.CollectedField, obj *entity.UserRegisterInput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserRegisterInput_password(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserRegisterInput_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserRegisterInput",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3552,6 +3708,52 @@ func (ec *executionContext) _Recipe(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Recipe_cuisine(ctx, field, obj)
 		case "description":
 			out.Values[i] = ec._Recipe_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userRegisterInputImplementors = []string{"UserRegisterInput"}
+
+func (ec *executionContext) _UserRegisterInput(ctx context.Context, sel ast.SelectionSet, obj *entity.UserRegisterInput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userRegisterInputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserRegisterInput")
+		case "name":
+			out.Values[i] = ec._UserRegisterInput_name(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._UserRegisterInput_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "password":
+			out.Values[i] = ec._UserRegisterInput_password(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

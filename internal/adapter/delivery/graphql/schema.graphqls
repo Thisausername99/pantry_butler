@@ -4,6 +4,22 @@
 scalar Map
 scalar Time
 
+type User {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String!
+  createdAt: Time!
+  pantries: [String!]!
+}
+
+input UserInput {
+  email: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+}
+
 type PantryEntry {
   id: ID!
   name: String!
@@ -35,5 +51,6 @@ type Query {
 }
 
 type Mutation { 
+  createUser(input: UserInput!): User!
   insertEntry(userID: String!, pantryID: String!, entry: PantryEntryInput!): Boolean!
 } 
