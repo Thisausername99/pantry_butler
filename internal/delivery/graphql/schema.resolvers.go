@@ -17,6 +17,12 @@ func (r *mutationResolver) InsertEntry(ctx context.Context, pantryID string, ent
 	return err == nil, err
 }
 
+// DeleteUserPantry is the resolver for the deleteUserPantry field.
+func (r *mutationResolver) DeleteUserPantry(ctx context.Context, userID string, pantryID string) (bool, error) {
+	err := r.UseCase.RemoveUserPantry(ctx, userID, pantryID)
+	return err == nil, err
+}
+
 // GetRecipe is the resolver for the getRecipe field.
 func (r *queryResolver) GetRecipes(ctx context.Context) ([]*entity.Recipe, error) {
 	recipes, err := r.UseCase.GetAllRecipes(ctx)

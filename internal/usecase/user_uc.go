@@ -19,11 +19,11 @@ func (u *Usecase) RegisterUser(ctx context.Context, input *entity.UserRegisterIn
 	// Check if user already exists by email
 	existingUser, err := u.RepoWrapper.UserRepo.GetUserByEmail(ctx, input.Email)
 	if err != nil {
-		u.Logger.Error("error checking existing user", zap.Error(err))
+		u.Logger.Error("Usecase.RegisterUser: error checking existing user", zap.Error(err))
 		return nil, err
 	}
 	if existingUser != nil {
-		u.Logger.Error("user already exists", zap.String("email", input.Email))
+		u.Logger.Error("Usecase.RegisterUser: user already exists", zap.String("email", input.Email))
 		return nil, errors.New("user already exists")
 	}
 
@@ -45,7 +45,7 @@ func (u *Usecase) RegisterUser(ctx context.Context, input *entity.UserRegisterIn
 	// Hash password
 	hashedPassword, err := security.HashPassword(input.Password)
 	if err != nil {
-		u.Logger.Error("error hashing password", zap.Error(err))
+		u.Logger.Error("Usecase.RegisterUser: error hashing password", zap.Error(err))
 		return nil, err
 	}
 	user.Password = hashedPassword
@@ -53,11 +53,11 @@ func (u *Usecase) RegisterUser(ctx context.Context, input *entity.UserRegisterIn
 	// Persist user to database
 	err = u.RepoWrapper.UserRepo.CreateUser(ctx, user)
 	if err != nil {
-		u.Logger.Error("error creating user", zap.Error(err))
+		u.Logger.Error("Usecase.RegisterUser: error creating user", zap.Error(err))
 		return nil, err
 	}
 
-	u.Logger.Info("user created successfully", zap.String("id", user.ID))
+	u.Logger.Info("Usecase.RegisterUser: user created successfully", zap.String("id", user.ID))
 	return user, nil
 }
 
@@ -81,15 +81,24 @@ func (u *Usecase) UpdateUserWithPantry(ctx context.Context, userID string, name 
 	return nil
 }
 
+func (u *Usecase) UpdateUser(ctx context.Context, userID string, user *entity.User) error {
+	err := u.RepoWrapper.UserRepo.UpdateUser(ctx, userID, user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u *Usecase) RemoveUserPantry(ctx context.Context, userID string, pantryID string) error {
+
 	err := u.RepoWrapper.UserRepo.DeletePantryFromUser(ctx, userID, pantryID)
 	if err != nil {
-		u.Logger.Error("error deleting pantry from user", zap.Error(err))
+		u.Logger.Error("Usecase.RemoveUserPantry: error deleting pantry from user", zap.Error(err))
 		return err
 	}
 	err = u.RepoWrapper.PantryRepo.DeletePantry(ctx, pantryID)
 	if err != nil {
-		u.Logger.Error("error deleting pantry", zap.Error(err))
+		u.Logger.Error("Usecase.RemoveUserPantry: error deleting pantry", zap.Error(err))
 		return err
 	}
 	return nil

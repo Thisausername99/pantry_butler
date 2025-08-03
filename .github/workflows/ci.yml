@@ -31,8 +31,11 @@ jobs:
         go-version: '1.21'
         cache: true
 
-    - name: Install dependencies
-      run: go mod download
+    - name: Install and update dependencies
+      run: |
+        go mod download
+        go mod tidy
+        go get -u ./...
 
     - name: Run linter
       run: |
@@ -79,10 +82,28 @@ jobs:
       with:
         go-version: '1.21'
 
+    - name: Update dependencies
+      run: |
+        go mod tidy
+        go mod download
+
     - name: Run security scan
       run: |
         go install golang.org/x/vuln/cmd/govulncheck@latest
         govulncheck ./...
+      continue-on-error: true
+
+    - name: Check for vulnerabilities
+      run: |
+        echo "Checking for known vulnerabilities..."
+        if govulncheck ./... 2>&1 | grep -q "Found"; then
+          echo "⚠️  Vulnerabilities found! Please review and update dependencies."
+          echo "Run 'govulncheck ./...' locally for detailed information."
+          echo "Consider running 'go get -u ./...' to update dependencies."
+          exit 1
+        else
+          echo "✅ No vulnerabilities found!"
+        fi
 
   docker:
     runs-on: ubuntu-latest
@@ -96,8 +117,8 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build Docker image
-      run: docker build -t pantry-butler:latest .
+      run: docker build -t server:latest -f docker/Dockerfile .
 
     - name: Test Docker image
       run: |
-        docker run --rm pantry-butler:latest --help || true 
+        docker run --rm server:latest --help || true 

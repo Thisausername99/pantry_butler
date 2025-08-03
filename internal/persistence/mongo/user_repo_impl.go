@@ -62,3 +62,12 @@ func (m *UserRepo) DeletePantryFromUser(ctx context.Context, userID string, pant
 	}
 	return nil
 }
+
+func (m *UserRepo) UpdateUser(ctx context.Context, userID string, user *entity.User) error {
+	filter := bson.M{"id": userID}
+	_, err := m.Collection.UpdateOne(ctx, filter, bson.M{"$set": user})
+	if err != nil {
+		return err
+	}
+	return nil
+}

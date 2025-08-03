@@ -47,4 +47,5 @@ type Query {
 
 type Mutation { 
   insertEntry(pantryID: String!, entryInput: PantryEntryInput!): Boolean!
+  deleteUserPantry(userID: String!, pantryID: String!): Boolean!
 }

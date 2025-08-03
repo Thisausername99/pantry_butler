@@ -7,6 +7,8 @@ import (
 )
 
 type UserRepository interface {
+	//!TODO: Add update user info function
+	UpdateUser(ctx context.Context, userID string, user *entity.User) error
 	GetUser(ctx context.Context, userID string) (*entity.User, error)
 	CreateUser(ctx context.Context, user *entity.User) error
 	UpdateUserWithPantry(ctx context.Context, userID string, pantryID string) error

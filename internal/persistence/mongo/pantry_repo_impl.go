@@ -21,19 +21,19 @@ var _ repository.PantryRepository = (*PantryEntryRepo)(nil)
 func (m *PantryEntryRepo) GetPantryEntries(ctx context.Context, pantryID string) ([]entity.PantryEntry, error) {
 	// var entries []*entity.PantryEntry
 	var pantry entity.Pantry
-	m.Logger.Info("Getting pantry entries", zap.String("pantryID", pantryID))
+	m.Logger.Info("PantryEntryRepo.GetPantryEntries: Getting pantry entries", zap.String("pantryID", pantryID))
 	err := m.Collection.FindOne(ctx, bson.M{"id": pantryID}).Decode(&pantry)
 	if err != nil {
 		if m.Logger != nil {
-			m.Logger.Error("Failed to find pantry", zap.Error(err))
+			m.Logger.Error("PantryEntryRepo.GetPantryEntries: Failed to find pantry", zap.Error(err))
 		}
 		return nil, err
 	}
-	m.Logger.Info("Pantry object", zap.Any("pantry", pantry))
+	// m.Logger.Info("Pantry object", zap.Any("pantry", pantry))
 	if m.Logger != nil {
 		if pantry.Entries != nil {
 
-			m.Logger.Info("Successfully retrieved pantry entries", zap.Int("count", len(*pantry.Entries)))
+			m.Logger.Info("PantryEntryRepo.GetPantryEntries: Successfully retrieved pantry entries", zap.Int("count", len(*pantry.Entries)))
 			m.Logger.Info("Pantry entries", zap.Any("entries", pantry.Entries))
 		} else {
 			m.Logger.Info("Successfully retrieved pantry entries", zap.Int("count", 0))
@@ -94,7 +94,8 @@ func (m *PantryEntryRepo) CreateNewPantry(ctx context.Context, pantry *entity.Pa
 }
 
 func (m *PantryEntryRepo) DeletePantry(ctx context.Context, pantryID string) error {
-	_, err := m.Collection.DeleteOne(ctx, bson.M{"pantryId": pantryID})
+	_, err := m.Collection.DeleteOne(ctx, bson.M{"id": pantryID})
+	m.Logger.Info("PantryEntryRepo.DeletePantry: Deleting pantry", zap.String("pantryID", pantryID))
 	if err != nil {
 		m.Logger.Error("Failed to delete pantry", zap.Error(err))
 		return err

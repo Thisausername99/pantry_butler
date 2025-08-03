@@ -1,0 +1,172 @@
+name: Telegram Notifications
+
+on:
+  push:
+    branches: [ main, master, develop, feature/* ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types:
+      - completed
+  release:
+    types: [published, created, edited, deleted, prereleased, released]
+
+jobs:
+  telegram-notify:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'skipped'
+    
+    steps:
+    - name: Notify on Push
+      if: github.event_name == 'push'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          🚀 New Code Push
+          
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Author: ${{ github.actor }}
+          Message: ${{ github.event.head_commit.message }}
+          
+          📊 View Commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+
+    - name: Notify on Pull Request
+      if: github.event_name == 'pull_request'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          🔄 Pull Request ${{ github.event.action }}
+          
+          Repository: ${{ github.repository }}
+          PR: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}
+          Author: ${{ github.event.pull_request.user.login }}
+          Branch: ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}
+          Status: ${{ github.event.pull_request.state }}
+          
+          📊 View PR: https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+
+    - name: Notify on Workflow Run
+      if: github.event_name == 'workflow_run'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          🔧 CI/CD Pipeline ${{ github.event.workflow_run.conclusion }}
+          
+          Repository: ${{ github.repository }}
+          Workflow: ${{ github.event.workflow_run.name }}
+          Branch: ${{ github.event.workflow_run.head_branch }}
+          Commit: ${{ github.event.workflow_run.head_sha }}
+          Status: ${{ github.event.workflow_run.conclusion }}
+          Duration: ${{ github.event.workflow_run.duration }}
+          
+          📊 View Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
+
+    - name: Notify on Release
+      if: github.event_name == 'release'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          🎉 Release ${{ github.event.action }}
+          
+          Repository: ${{ github.repository }}
+          Release: ${{ github.event.release.tag_name }}
+          Title: ${{ github.event.release.name }}
+          Author: ${{ github.event.release.author.login }}
+          Draft: ${{ github.event.release.draft }}
+          Prerelease: ${{ github.event.release.prerelease }}
+          
+          📝 Description:
+          ${{ github.event.release.body }}
+          
+          📊 View Release: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}
+
+  telegram-deployment:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Build application
+      run: go build -v ./cmd/pantry_butler
+
+    - name: Notify deployment start
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          🚀 Deployment Started
+          
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Environment: Production
+          
+          ⏳ Building and deploying...
+
+    - name: Simulate deployment
+      run: |
+        echo "Simulating deployment process..."
+        sleep 30
+        echo "Deployment completed successfully!"
+
+    - name: Notify deployment success
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          ✅ Deployment Successful
+          
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Environment: Production
+          Deployed at: ${{ github.event.head_commit.timestamp }}
+          
+          🎉 Your Pantry Butler is now live!
+          
+          📊 View Deployment: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  telegram-error-handler:
+    runs-on: ubuntu-latest
+    if: failure()
+    
+    steps:
+    - name: Notify on failure
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: |
+          ❌ Workflow Failed
+          
+          Repository: ${{ github.repository }}
+          Workflow: ${{ github.workflow }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.sha }}
+          Actor: ${{ github.actor }}
+          
+          🔍 Failed Job: ${{ github.job }}
+          
+          📊 View Failed Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          
+          ⚠️ Please check the logs and fix the issue. 

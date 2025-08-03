@@ -41,12 +41,7 @@ func main() {
 	// Setup collections
 	pantryEntryCollection := mongoClient.Database(config.MongoDB.Database).Collection("pantries")
 	recipeCollection := mongoClient.Database(config.MongoDB.Database).Collection("recipes")
-
-	// Get port from environment
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
-	}
+	userCollection := mongoClient.Database(config.MongoDB.Database).Collection("users")
 
 	// Setup use case
 	uc := &usecase.Usecase{
@@ -54,6 +49,7 @@ func main() {
 		RepoWrapper: usecase.RepoWrapper{
 			RecipeRepo: &mongo.RecipeRepo{Collection: recipeCollection, Logger: log},
 			PantryRepo: &mongo.PantryEntryRepo{Collection: pantryEntryCollection, Logger: log},
+			UserRepo:   &mongo.UserRepo{Collection: userCollection, Logger: log},
 		},
 	}
 
@@ -66,8 +62,8 @@ func main() {
 
 	// Start server in a goroutine
 	go func() {
-		log.Info("Starting HTTP server", zap.String("port", port))
-		if err := server.Start(port); err != nil {
+		log.Info("Starting HTTP server", zap.String("port", defaultPort))
+		if err := server.Start(defaultPort); err != nil {
 			log.Error("Failed to start server", zap.Error(err))
 			os.Exit(1)
 		}

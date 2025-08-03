@@ -19,19 +19,19 @@
         "id": "1",
         "name": "John Doe",
         "email": "john.doe@example.com",
-        "pantry_id": "1"
+        "pantries": ["1"]
         },
         {
         "id": "2",
         "name": "Jane Doe",
         "email": "jane.doe@example.com",
-        "pantry_id": "2"
+        "pantries": ["2"]
         },
         {
         "id": "3",
         "name": "Jim Doe",
         "email": "jim.doe@example.com",
-        "pantry_id": "3"
+        "pantries": ["3"]
         }
     ]}
 ]

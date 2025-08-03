@@ -91,8 +91,8 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
-// AuthMiddleware validates authentication
-func AuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
+// LegacyAuthMiddleware is a simple authentication middleware (deprecated)
+func LegacyAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Skip auth for GraphQL playground
 		if c.Request.URL.Path == "/" {

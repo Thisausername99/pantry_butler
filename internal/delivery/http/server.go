@@ -69,7 +69,8 @@ func (s *Server) setupMiddleware() {
 	s.router.Use(GraphQLContextMiddleware())
 
 	// Authentication middleware (optional - can be enabled per route)
-	// s.router.Use(AuthMiddleware(s.logger))
+	// authConfig := config.NewAuthConfig(s.useCase, s.logger)
+	// s.router.Use(AuthMiddleware(authConfig))
 }
 
 // setupRoutes configures all routes
