@@ -1,0 +1,50 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+scalar Map
+scalar Time
+
+
+type UserRegisterInput {
+  name : String
+  email : String!
+  firstName: String
+  lastName: String
+  password: String!
+}
+
+
+type PantryEntry {
+  ID: String!
+  name: String!
+  expiration: Time
+  quantity: Float 
+  quantityType: String
+}
+
+input PantryEntryInput {
+  name: String!
+  quantity: Float
+  quantityType: String
+}
+
+type Recipe {
+  id: ID!
+  name: String!
+  rating: Int
+  ingredients: Map!
+  difficulty: Int
+  cuisine: String
+  description: String!
+}
+
+type Query {
+  getRecipes: [Recipe!]!
+  getRecipesByCuisine(cuisine: String!): [Recipe!]!
+  generateRecipesFromPantry(userID: String!, pantryID: String!): [Recipe!]!
+  getUserPantryById(pantryID: String!): [PantryEntry!]
+}
+
+type Mutation { 
+  insertEntry(pantryID: String!, entryInput: PantryEntryInput!): Boolean!
+}

@@ -1,0 +1,46 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: pantry_mongodb
+    environment:
+      MONGO_INITDB_DATABASE: pantry_butler
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - pantry_net
+  
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: server
+    ports:
+      - 8080:8080
+    environment:
+      PORT: 8080
+      MONGODB_URI: mongodb://root:password@mongodb:27017/pantry_butler_dev?authSource=admin
+      MONGODB_DATABASE: pantry_butler_dev
+      SERVER_PORT: 27107
+      SERVER_HOST: mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - pantry_net
+  # envoy:
+  #   image: envoyproxy/envoy:v1.35.0
+  #   container_name: envoy
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - ./config/envoy/conf.yaml:/etc/envoy/envoy.yaml
+
+
+volumes:
+  mongodb_data:
+
+networks:
+  pantry_net:
