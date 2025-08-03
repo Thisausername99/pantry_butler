@@ -18,13 +18,13 @@ type PantryEntry {
   ID: String!
   name: String!
   expiration: Time
-  quantity: Int 
+  quantity: Float 
   quantityType: String
 }
 
 input PantryEntryInput {
   name: String!
-  quantity: Int 
+  quantity: Float
   quantityType: String
 }
 

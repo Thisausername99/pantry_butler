@@ -28,7 +28,7 @@ fi
 # Check if MongoDB is running
 if ! docker ps | grep -q "pantry_mongodb"; then
     echo -e "${YELLOW}⚠️  MongoDB container not running. Starting it...${NC}"
-    docker-compose up -d mongodb
+    docker compose up -d mongodb
     echo "⏳ Waiting for MongoDB to be ready..."
     sleep 5
 fi
@@ -42,7 +42,13 @@ run_migration() {
     
     case $action in
         "up")
-            migrate -path=$MIGRATIONS_PATH -database="mongodb://root:password@localhost:27017/pantry_butler_dev?authSource=admin" up
+            if [ -n "$2" ]; then
+                # Start from specific version
+                migrate -path=$MIGRATIONS_PATH -database="mongodb://root:password@localhost:27017/pantry_butler_dev?authSource=admin" up $2
+            else
+                # Apply all pending migrations
+                migrate -path=$MIGRATIONS_PATH -database="mongodb://root:password@localhost:27017/pantry_butler_dev?authSource=admin" up
+            fi
             ;;
         "down")
             migrate -path=$MIGRATIONS_PATH -database="mongodb://root:password@localhost:27017/pantry_butler_dev?authSource=admin" down
@@ -63,7 +69,12 @@ run_migration() {
 # Parse command line arguments
 case "${1:-help}" in
     "up")
-        run_migration "up"
+        if [ -n "$2" ]; then
+            echo -e "${YELLOW}🔄 Starting migration from version $2...${NC}"
+            run_migration "up" $2
+        else
+            run_migration "up"
+        fi
         echo -e "${GREEN}✅ Migrations applied successfully!${NC}"
         ;;
     "down")
@@ -89,7 +100,7 @@ case "${1:-help}" in
         echo "Usage: $0 [command]"
         echo ""
         echo "Commands:"
-        echo "  up      - Apply all pending migrations"
+        echo "  up [N]  - Apply all pending migrations (or from version N)"
         echo "  down    - Rollback all migrations"
         echo "  force N - Force migration to version N"
         echo "  version - Show current migration version"
@@ -98,6 +109,7 @@ case "${1:-help}" in
         echo ""
         echo "Examples:"
         echo "  $0 up                    # Apply all migrations"
+        echo "  $0 up 2                  # Apply migrations starting from version 2"
         echo "  $0 down                  # Rollback all migrations"
         echo "  $0 force 1               # Force migration to version 1"
         echo "  $0 status                # Check migration status"

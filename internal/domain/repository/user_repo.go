@@ -11,4 +11,5 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, user *entity.User) error
 	UpdateUserWithPantry(ctx context.Context, userID string, pantryID string) error
 	GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
+	DeletePantryFromUser(ctx context.Context, userID string, pantryID string) error
 }

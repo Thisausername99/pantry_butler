@@ -39,7 +39,7 @@ func main() {
 	}()
 
 	// Setup collections
-	pantryEntryCollection := mongoClient.Database(config.MongoDB.Database).Collection("pantry_entries")
+	pantryEntryCollection := mongoClient.Database(config.MongoDB.Database).Collection("pantries")
 	recipeCollection := mongoClient.Database(config.MongoDB.Database).Collection("recipes")
 
 	// Get port from environment

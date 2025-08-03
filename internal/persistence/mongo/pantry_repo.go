@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/thisausername99/pantry_butler/internal/domain/entity"
+	"github.com/thisausername99/pantry_butler/internal/domain/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"
 )
@@ -14,53 +15,55 @@ type PantryEntryRepo struct {
 	Logger     *zap.Logger
 }
 
-func (m *PantryEntryRepo) GetPantryEntries(ctx context.Context, pantryID string) ([]*entity.PantryEntry, error) {
-	var entries []*entity.PantryEntry
-	cursor, err := m.Collection.Find(ctx, bson.M{"pantryId": pantryID})
+// Ensure it implements the interface
+var _ repository.PantryRepository = (*PantryEntryRepo)(nil)
+
+func (m *PantryEntryRepo) GetPantryEntries(ctx context.Context, pantryID string) ([]entity.PantryEntry, error) {
+	// var entries []*entity.PantryEntry
+	var pantry entity.Pantry
+	m.Logger.Info("Getting pantry entries", zap.String("pantryID", pantryID))
+	err := m.Collection.FindOne(ctx, bson.M{"id": pantryID}).Decode(&pantry)
 	if err != nil {
 		if m.Logger != nil {
-			m.Logger.Error("Failed to find pantry entries", zap.Error(err))
+			m.Logger.Error("Failed to find pantry", zap.Error(err))
 		}
 		return nil, err
 	}
-	defer cursor.Close(ctx)
-	for cursor.Next(ctx) {
-		var entry entity.PantryEntry
-		if err := cursor.Decode(&entry); err != nil {
-			if m.Logger != nil {
-				m.Logger.Error("Failed to decode pantry entry", zap.Error(err))
-			}
-			return nil, err
-		}
-		entries = append(entries, &entry)
-	}
-	if err := cursor.Err(); err != nil {
-		if m.Logger != nil {
-			m.Logger.Error("Cursor error after iterating pantry entries", zap.Error(err))
-		}
-		return nil, err
-	}
+	m.Logger.Info("Pantry object", zap.Any("pantry", pantry))
 	if m.Logger != nil {
-		m.Logger.Info("Successfully retrieved pantry entries", zap.Int("count", len(entries)))
+		if pantry.Entries != nil {
+
+			m.Logger.Info("Successfully retrieved pantry entries", zap.Int("count", len(*pantry.Entries)))
+			m.Logger.Info("Pantry entries", zap.Any("entries", pantry.Entries))
+		} else {
+			m.Logger.Info("Successfully retrieved pantry entries", zap.Int("count", 0))
+			m.Logger.Info("Pantry entries", zap.Any("entries", nil))
+		}
 	}
-	return entries, nil
+
+	// Handle nil entries
+	if pantry.Entries == nil {
+		return []entity.PantryEntry{}, nil
+	}
+
+	return *pantry.Entries, nil
 }
 
-func (m *PantryEntryRepo) InsertPantryEntry(ctx context.Context, pantryID string, entry *entity.PantryEntryInput) error {
-	pantryEntry := &entity.PantryEntry{}
+func (m *PantryEntryRepo) InsertPantryEntry(ctx context.Context, pantryID string, entry *entity.PantryEntry) error {
 	if entry.Name == "" {
 		return errors.New("entry does not have a name")
 	}
 
-	pantryEntry.Name = entry.Name
-
-	if entry.Quantity != nil {
-		pantryEntry.Quantity = entry.Quantity
-	}
-
 	//! TODO: Add expiration date or generate one
 
-	_, err := m.Collection.InsertOne(ctx, bson.M{"pantryId": pantryID, "entry": pantryEntry})
+	// Add the entry to the pantry's pantry_entries array where id == pantryID
+	filter := bson.M{"id": pantryID}
+	update := bson.M{
+		"$push": bson.M{
+			"pantry_entries": entry,
+		},
+	}
+	_, err := m.Collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		m.Logger.Error("Failed to insert pantry entry", zap.Error(err))
 		return err
@@ -85,6 +88,15 @@ func (m *PantryEntryRepo) CreateNewPantry(ctx context.Context, pantry *entity.Pa
 		if m.Logger != nil {
 			m.Logger.Error("Failed to create new pantry", zap.Error(err))
 		}
+		return err
+	}
+	return nil
+}
+
+func (m *PantryEntryRepo) DeletePantry(ctx context.Context, pantryID string) error {
+	_, err := m.Collection.DeleteOne(ctx, bson.M{"pantryId": pantryID})
+	if err != nil {
+		m.Logger.Error("Failed to delete pantry", zap.Error(err))
 		return err
 	}
 	return nil

@@ -6,15 +6,15 @@ import (
 	"github.com/thisausername99/pantry_butler/internal/domain/entity"
 )
 
-func (u *Usecase) GetAllRecipes(ctx context.Context) ([]*entity.Recipe, error) {
+func (u *Usecase) GetAllRecipes(ctx context.Context) ([]entity.Recipe, error) {
 	return u.RepoWrapper.RecipeRepo.GetRecipes(ctx)
 }
 
-func (u *Usecase) GetRecipeByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error) {
+func (u *Usecase) GetRecipesByCuisine(ctx context.Context, cuisine string) ([]entity.Recipe, error) {
 	return u.RepoWrapper.RecipeRepo.GetRecipesByCuisine(ctx, cuisine)
 }
 
-func (u *Usecase) FindMatchingRecipes(ctx context.Context, pantryID string) ([]*entity.Recipe, error) {
+func (u *Usecase) GenerateRecipesFromPantry(ctx context.Context, pantryID string) ([]entity.Recipe, error) {
 	recipes, err := u.RepoWrapper.RecipeRepo.GetRecipes(ctx)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (u *Usecase) FindMatchingRecipes(ctx context.Context, pantryID string) ([]*
 		pantrySet[entry.Name] = struct{}{}
 	}
 
-	var matches []*entity.Recipe
+	var matches []entity.Recipe
 	for _, recipe := range recipes {
 		allIngredientsPresent := true
 		for ingredient := range recipe.Ingredients {

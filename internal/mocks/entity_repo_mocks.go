@@ -35,6 +35,34 @@ func (m *MockPantryRepository) EXPECT() *MockPantryRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateNewPantry mocks base method.
+func (m *MockPantryRepository) CreateNewPantry(arg0 context.Context, arg1 *entity.Pantry) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNewPantry", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateNewPantry indicates an expected call of CreateNewPantry.
+func (mr *MockPantryRepositoryMockRecorder) CreateNewPantry(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNewPantry", reflect.TypeOf((*MockPantryRepository)(nil).CreateNewPantry), arg0, arg1)
+}
+
+// DeletePantry mocks base method.
+func (m *MockPantryRepository) DeletePantry(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePantry", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePantry indicates an expected call of DeletePantry.
+func (mr *MockPantryRepositoryMockRecorder) DeletePantry(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePantry", reflect.TypeOf((*MockPantryRepository)(nil).DeletePantry), arg0, arg1)
+}
+
 // DeletePantryEntry mocks base method.
 func (m *MockPantryRepository) DeletePantryEntry(arg0 context.Context, arg1, arg2 string) error {
 	m.ctrl.T.Helper()
@@ -50,10 +78,10 @@ func (mr *MockPantryRepositoryMockRecorder) DeletePantryEntry(arg0, arg1, arg2 i
 }
 
 // GetPantryEntries mocks base method.
-func (m *MockPantryRepository) GetPantryEntries(arg0 context.Context, arg1 string) ([]*entity.PantryEntry, error) {
+func (m *MockPantryRepository) GetPantryEntries(arg0 context.Context, arg1 string) ([]entity.PantryEntry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPantryEntries", arg0, arg1)
-	ret0, _ := ret[0].([]*entity.PantryEntry)
+	ret0, _ := ret[0].([]entity.PantryEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -65,7 +93,7 @@ func (mr *MockPantryRepositoryMockRecorder) GetPantryEntries(arg0, arg1 interfac
 }
 
 // InsertPantryEntry mocks base method.
-func (m *MockPantryRepository) InsertPantryEntry(arg0 context.Context, arg1 string, arg2 *entity.PantryEntryInput) error {
+func (m *MockPantryRepository) InsertPantryEntry(arg0 context.Context, arg1 string, arg2 *entity.PantryEntry) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertPantryEntry", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -102,10 +130,10 @@ func (m *MockRecipeRepository) EXPECT() *MockRecipeRepositoryMockRecorder {
 }
 
 // GetRecipes mocks base method.
-func (m *MockRecipeRepository) GetRecipes(arg0 context.Context) ([]*entity.Recipe, error) {
+func (m *MockRecipeRepository) GetRecipes(arg0 context.Context) ([]entity.Recipe, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRecipes", arg0)
-	ret0, _ := ret[0].([]*entity.Recipe)
+	ret0, _ := ret[0].([]entity.Recipe)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -117,10 +145,10 @@ func (mr *MockRecipeRepositoryMockRecorder) GetRecipes(arg0 interface{}) *gomock
 }
 
 // GetRecipesByCuisine mocks base method.
-func (m *MockRecipeRepository) GetRecipesByCuisine(arg0 context.Context, arg1 string) ([]*entity.Recipe, error) {
+func (m *MockRecipeRepository) GetRecipesByCuisine(arg0 context.Context, arg1 string) ([]entity.Recipe, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRecipesByCuisine", arg0, arg1)
-	ret0, _ := ret[0].([]*entity.Recipe)
+	ret0, _ := ret[0].([]entity.Recipe)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -155,18 +183,31 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUserRepository) CreateUser(arg0 context.Context, arg1 *entity.User) (*entity.User, error) {
+func (m *MockUserRepository) CreateUser(arg0 context.Context, arg1 *entity.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", arg0, arg1)
-	ret0, _ := ret[0].(*entity.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // CreateUser indicates an expected call of CreateUser.
 func (mr *MockUserRepositoryMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), arg0, arg1)
+}
+
+// DeletePantryFromUser mocks base method.
+func (m *MockUserRepository) DeletePantryFromUser(arg0 context.Context, arg1, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePantryFromUser", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePantryFromUser indicates an expected call of DeletePantryFromUser.
+func (mr *MockUserRepositoryMockRecorder) DeletePantryFromUser(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePantryFromUser", reflect.TypeOf((*MockUserRepository)(nil).DeletePantryFromUser), arg0, arg1, arg2)
 }
 
 // GetUser mocks base method.
@@ -182,4 +223,33 @@ func (m *MockUserRepository) GetUser(arg0 context.Context, arg1 string) (*entity
 func (mr *MockUserRepositoryMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserRepository)(nil).GetUser), arg0, arg1)
+}
+
+// GetUserByEmail mocks base method.
+func (m *MockUserRepository) GetUserByEmail(arg0 context.Context, arg1 string) (*entity.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByEmail", arg0, arg1)
+	ret0, _ := ret[0].(*entity.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByEmail indicates an expected call of GetUserByEmail.
+func (mr *MockUserRepositoryMockRecorder) GetUserByEmail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetUserByEmail), arg0, arg1)
+}
+
+// UpdateUserWithPantry mocks base method.
+func (m *MockUserRepository) UpdateUserWithPantry(arg0 context.Context, arg1, arg2 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserWithPantry", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserWithPantry indicates an expected call of UpdateUserWithPantry.
+func (mr *MockUserRepositoryMockRecorder) UpdateUserWithPantry(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserWithPantry", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserWithPantry), arg0, arg1, arg2)
 }

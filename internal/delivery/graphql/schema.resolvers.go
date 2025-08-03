@@ -13,18 +13,35 @@ import (
 
 // InsertEntry is the resolver for the insertEntry field.
 func (r *mutationResolver) InsertEntry(ctx context.Context, pantryID string, entryInput entity.PantryEntryInput) (bool, error) {
-	err := r.UseCase.RepoWrapper.PantryRepo.InsertPantryEntry(ctx, pantryID, &entryInput)
+	err := r.UseCase.InsertPantryEntry(ctx, pantryID, &entryInput)
 	return err == nil, err
 }
 
 // GetRecipe is the resolver for the getRecipe field.
 func (r *queryResolver) GetRecipes(ctx context.Context) ([]*entity.Recipe, error) {
-	return r.UseCase.RepoWrapper.RecipeRepo.GetRecipes(ctx)
+	recipes, err := r.UseCase.GetAllRecipes(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]*entity.Recipe, len(recipes))
+	for i := range recipes {
+		result[i] = &recipes[i]
+	}
+	return result, nil
 }
 
 // GetRecipesByCuisine is the resolver for the getRecipesByCuisine field.
 func (r *queryResolver) GetRecipesByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error) {
-	return r.UseCase.RepoWrapper.RecipeRepo.GetRecipesByCuisine(ctx, cuisine)
+	recipes, err := r.UseCase.GetRecipesByCuisine(ctx, cuisine)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]*entity.Recipe, len(recipes))
+	for i := range recipes {
+		result[i] = &recipes[i]
+	}
+
+	return result, nil
 }
 
 // GenerateRecipesFromPantry is the resolver for the generateRecipesFromPantry field.
@@ -34,7 +51,15 @@ func (r *queryResolver) GenerateRecipesFromPantry(ctx context.Context, userID st
 
 // GetUserPantryByID is the resolver for the getUserPantryById field.
 func (r *queryResolver) GetUserPantryByID(ctx context.Context, pantryID string) ([]*entity.PantryEntry, error) {
-	return r.UseCase.RepoWrapper.PantryRepo.GetPantryEntries(ctx, pantryID)
+	entries, err := r.UseCase.GetAllPantryEntries(ctx, pantryID)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]*entity.PantryEntry, len(entries))
+	for i := range entries {
+		result[i] = &entries[i]
+	}
+	return result, nil
 }
 
 // Mutation returns MutationResolver implementation.

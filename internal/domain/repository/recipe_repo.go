@@ -7,6 +7,6 @@ import (
 )
 
 type RecipeRepository interface {
-	GetRecipes(ctx context.Context) ([]*entity.Recipe, error)
-	GetRecipesByCuisine(ctx context.Context, cuisine string) ([]*entity.Recipe, error)
+	GetRecipes(ctx context.Context) ([]entity.Recipe, error)
+	GetRecipesByCuisine(ctx context.Context, cuisine string) ([]entity.Recipe, error)
 }

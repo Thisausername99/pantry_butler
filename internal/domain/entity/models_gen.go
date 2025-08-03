@@ -6,16 +6,18 @@ type Mutation struct {
 }
 
 type PantryEntryInput struct {
-	Name         string  `json:"name"`
-	Quantity     *int    `json:"quantity,omitempty"`
-	QuantityType *string `json:"quantityType,omitempty"`
+	Name         string   `json:"name"`
+	Quantity     *float64 `json:"quantity,omitempty"`
+	QuantityType *string  `json:"quantityType,omitempty"`
 }
 
 type Query struct {
 }
 
 type UserRegisterInput struct {
-	Name     *string `json:"name,omitempty"`
-	Email    string  `json:"email"`
-	Password string  `json:"password"`
+	Name      *string `json:"name,omitempty"`
+	Email     string  `json:"email"`
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Password  string  `json:"password"`
 }

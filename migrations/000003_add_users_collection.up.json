@@ -1,18 +1,19 @@
 [
     {    
-        "create ": "users"
+        "create": "users"
     },
     {
+        "createIndexes": "users",
         "indexes": [
-        {
-        "key": { "id": 1 },
-        "name": "id_1",
-        "unique": true
-        }
+            {
+            "key": { "id": 1 },
+            "name": "id_1",
+            "unique": true
+            }
         ]
     },
     {
-    "insertMany": "users",
+    "insert": "users",
     "documents": [
         {
         "id": "1",

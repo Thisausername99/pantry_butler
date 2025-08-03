@@ -3,6 +3,7 @@
     "create": "pantries"
   },
   {
+    "createIndexes": "pantries",
     "indexes": [
       {
         "key": { "id": 1 },
@@ -12,7 +13,7 @@
     ]
   },
   {
-    "insertMany": "pantries",
+    "insert": "pantries",
     "documents": [
       {
         "id": "1",
