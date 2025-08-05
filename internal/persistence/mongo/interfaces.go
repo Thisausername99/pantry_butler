@@ -30,7 +30,7 @@ type MongoCollection interface {
 	InsertMany(ctx context.Context, documents []interface{}) (MongoInsertManyResult, error)
 
 	// Find operations
-	FindOne(ctx context.Context, filter interface{}) MongoSingleResult
+	FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) MongoSingleResult
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (MongoCursor, error)
 
 	// Update operations

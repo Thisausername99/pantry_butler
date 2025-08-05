@@ -80,8 +80,8 @@ func (c *mongoCollection) InsertMany(ctx context.Context, documents []interface{
 	return &mongoInsertManyResult{result: result}, nil
 }
 
-func (c *mongoCollection) FindOne(ctx context.Context, filter interface{}) MongoSingleResult {
-	return &mongoSingleResult{result: c.coll.FindOne(ctx, filter)}
+func (c *mongoCollection) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) MongoSingleResult {
+	return &mongoSingleResult{result: c.coll.FindOne(ctx, filter, opts...)}
 }
 
 func (c *mongoCollection) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (MongoCursor, error) {
